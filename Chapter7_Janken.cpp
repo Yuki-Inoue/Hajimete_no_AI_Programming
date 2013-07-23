@@ -61,7 +61,7 @@ namespace JankenEnvironemnt {
         s_ = stronger_hand(s);
         if (a == s_)
             reward = 0.0;
-        else if (stronger_hand(a) == s_)
+        else if (a == s)
             reward = -1.0;
         else
             reward = 1.0;
