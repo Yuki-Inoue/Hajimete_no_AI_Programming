@@ -152,13 +152,14 @@ int main(int argc, const char * argv[])
     TableQAgent<JankenEnvironemnt::State, JankenEnvironemnt::Action, 3, 3> agent(0.2, 0.9);
 
     auto s = JankenEnvironemnt::Scissors;
+    auto s_ = s;
     for (int i=0; i<N; ++i) {
         printf("last hand: %s\n", action_to_string(s));
 
         auto a = agent.make_action(s);
         printf("play hand: %s\n", action_to_string(a));
 
-        auto s_ = s; double reward;
+        double reward;
         transition(s, a, reward, s_);
         printf("oppo hand: %s\n", action_to_string(s_));
         printf("reward   : %lf\n", reward);
