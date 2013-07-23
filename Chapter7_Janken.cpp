@@ -77,8 +77,9 @@ int softmax_roulette(const double *qs, int size) {
 
     std::vector<double> exp_qs;
     transform(qs, qs+size, back_inserter(exp_qs), exp);
-    double sum = accumulate(exp_qs.begin(), exp_qs.end(), 0.0);
-    double r = sum * udist(random_engine);
+
+    const double r = udist(random_engine)
+    * accumulate(exp_qs.begin(), exp_qs.end(), 0.0);
 
     double rsum = 0.0; int i = 0;
     while (true) {
@@ -107,17 +108,17 @@ private:
 
 public:
     TableQAgent(double alpha_, double gamma_, const Policy &policy_ = softmax_roulette)
-    : policy(policy_)
+    : learning_rate(alpha_), discount_rate(gamma_), policy(policy_)
     {
         for (int i=0; i<3; ++i)
             for (int j=0; j<3; ++j)
                 Q[i][j] = 0.0;
-        learning_rate = alpha_; discount_rate = gamma_;
     }
 
     void update(State s, Action a, double reward, State s_) {
         int si = state_to_int(s), s_i = state_to_int(s_), ai = action_to_int(a);
-        Q[si][ai] = (1 - learning_rate) * Q[si][ai] +
+        Q[si][ai] =
+        (1 - learning_rate) * Q[si][ai] +
         learning_rate * (reward + discount_rate * *std::max_element(Q[s_i], Q[s_i]+3));
     }
 
