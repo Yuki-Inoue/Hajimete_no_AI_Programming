@@ -58,13 +58,9 @@ namespace JankenEnvironemnt {
     }
 
     void transition(State s, Action a, double &reward, State &s_) {
-        s_ = stronger_hand(s);
-        if (a == s_)
-            reward = 0.0;
-        else if (a == s)
-            reward = -1.0;
-        else
-            reward = 1.0;
+	reward =
+	    a == (s_ = stronger_hand(s)) ?
+	    0.0 : a == s ? -1.0 : 1.0;
     }
 
 }
@@ -78,8 +74,9 @@ int softmax_roulette(const double *qs, int size) {
     std::vector<double> exp_qs;
     transform(qs, qs+size, back_inserter(exp_qs), exp);
 
-    const double r = udist(random_engine)
-    * accumulate(exp_qs.begin(), exp_qs.end(), 0.0);
+    const double r =
+	udist(random_engine)
+	* accumulate(exp_qs.begin(), exp_qs.end(), 0.0);
 
     double rsum = 0.0; int i = 0;
     while (true) {
@@ -118,8 +115,8 @@ public:
     void update(State s, Action a, double reward, State s_) {
         int si = state_to_int(s), s_i = state_to_int(s_), ai = action_to_int(a);
         Q[si][ai] =
-        (1 - learning_rate) * Q[si][ai] +
-        learning_rate * (reward + discount_rate * *std::max_element(Q[s_i], Q[s_i]+3));
+	    (1 - learning_rate) * Q[si][ai] +
+	    learning_rate * (reward + discount_rate * *std::max_element(Q[s_i], Q[s_i]+3));
     }
 
     Action make_action(State s) {
